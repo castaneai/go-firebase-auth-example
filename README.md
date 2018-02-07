@@ -1,4 +1,4 @@
-# go-firebase-auth-example
+# :fire: Firebase Authentication with Go backend :fire: 
 ![gif](./README.gif)
 
 ## Usage
@@ -8,4 +8,3 @@
 3. Open `index.html` and edit `// Initialize Firebase` section for your firebase project
 4. `go run main.go`
 5. Open [http://localhost:8080](http://localhost:8080)
-
