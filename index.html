@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>firebase-auth-example</title>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.6.0/firebaseui.css" />
+    <style>
+        .container {
+            width: 800px;
+            margin: 1em auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Welcome firebase-auth example</h1>
+    <div id="profile"></div>
+    <div id="firebaseui-auth-container"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase-auth.js"></script>
+<script>
+// Initialize Firebase
+var config = {
+    apiKey: "AIzaSyBu3I3N0OpN3EeSOKsWKmjlxYnVAeK6390",
+    authDomain: "morning-tide.firebaseapp.com",
+    databaseURL: "https://morning-tide.firebaseio.com",
+    projectId: "morning-tide",
+    storageBucket: "morning-tide.appspot.com",
+    messagingSenderId: "869271934593"
+};
+firebase.initializeApp(config);
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdn.firebase.com/libs/firebaseui/2.6.0/firebaseui.js"></script>
+<script>
+
+function init() {
+    firebase.auth().onAuthStateChanged(function(user) {
+        console.log('on auth state changed: ', user);
+        const signed = !!user;
+
+        if (signed) {
+            showProfile(user);
+        } else {
+            showLoginUI();
+        }
+    });
+}
+
+function showLoginUI() {
+    const ui = new firebaseui.auth.AuthUI(firebase.auth());
+    ui.start('#firebaseui-auth-container', {
+        signInSuccessUrl: '/',
+        signInOptions: [firebase.auth.TwitterAuthProvider.PROVIDER_ID]
+    });
+}
+
+function showProfile(user) {
+    user.getIdToken().then(function(idToken) {
+        console.log('idToken: ', idToken);
+        jQuery.ajax({url: '/profile', headers: {'Authorization': 'Bearer ' + idToken}}).then(function(data) {
+            const user = data.user;
+            jQuery('#profile').html(`Hello, <img src="${user.PhotoURL}"> ${user.DisplayName}!`);
+        });
+    });
+}
+
+window.onload = function() {
+    init();
+}
+</script>
+</body>
+</html>
